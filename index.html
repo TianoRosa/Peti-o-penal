@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cristiano Rosa | Advogado Criminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#1a9b8c;--teal-lt:#22c4b0;
+  --gold:#c9a84c;--gold-lt:#e2c06e;
+  --dark:#0d0f0e;--card:#131714;
+  --surface:#1a1f1c;--border:rgba(201,168,76,.18);
+  --text:#e8e4da;--muted:#8a8780;
+}
+html{background:var(--dark)}
+body{
+  min-height:100dvh;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(26,155,140,.13) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,.08) 0%,transparent 55%),
+    var(--dark);
+  font-family:'Lato',sans-serif;color:var(--text);
+  display:flex;justify-content:center;padding:0 0 64px;
+}
+.card{width:100%;max-width:430px;display:flex;flex-direction:column;align-items:center;padding:0 18px}
+
+/* ── HEADER ── */
+.header{width:100%;display:flex;flex-direction:column;align-items:center;padding-top:48px;padding-bottom:24px;opacity:0;animation:fadeDown .7s ease forwards}
+.avatar-wrap{position:relative;width:100px;height:100px;margin-bottom:20px}
+.avatar-ring{position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(var(--gold),var(--teal),var(--gold));animation:spin 8s linear infinite;opacity:.65}
+.avatar-bg{position:relative;z-index:1;width:100px;height:100px;border-radius:50%;background:#111714;border:3px solid #0d0f0e;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.avatar-bg img{width:64px;height:66px;object-fit:contain;display:block}
+
+.name{font-family:'Cinzel',serif;font-size:20px;font-weight:500;color:var(--text);letter-spacing:.06em;text-align:center;margin-bottom:4px}
+.role{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--teal-lt);letter-spacing:.07em;text-align:center;margin-bottom:6px}
+.oab{font-size:10.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+.email-line{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.04em}
+.divider{width:64px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto 0}
+
+/* ── SECTION LABEL ── */
+.section-label{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;width:100%;text-align:left;margin:22px 0 9px;padding-left:2px;opacity:0;animation:fadeUp .5s ease forwards}
+
+/* ── LINKS ── */
+.links{width:100%;display:flex;flex-direction:column;gap:9px}
+.btn{display:flex;align-items:center;gap:13px;width:100%;padding:14px 16px;border-radius:13px;background:var(--surface);border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:14px;font-weight:400;letter-spacing:.03em;cursor:pointer;position:relative;overflow:hidden;transition:border-color .25s,transform .18s,background .25s;opacity:0;animation:fadeUp .45s ease forwards}
+.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);opacity:0;transition:opacity .25s}
+.btn:hover{transform:translateY(-2px);border-color:rgba(201,168,76,.45);background:#1f2420}
+.btn:hover::before{opacity:1}
+.btn:active{transform:scale(.98)}
+.btn.hi-teal{background:linear-gradient(135deg,rgba(26,155,140,.15),rgba(26,155,140,.04));border-color:rgba(26,155,140,.4)}
+.btn.hi-red{background:linear-gradient(135deg,rgba(200,50,50,.15),rgba(200,50,50,.04));border-color:rgba(200,80,80,.4)}
+.btn.hi-gold{background:linear-gradient(135deg,rgba(201,168,76,.13),rgba(201,168,76,.03));border-color:rgba(201,168,76,.42)}
+
+.icon{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.icon svg{width:22px;height:22px;display:block}
+.btn-text{flex:1;line-height:1.3}
+.btn-main{display:block;font-size:13.5px}
+.btn-sub{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.arrow{color:var(--muted);font-size:13px;flex-shrink:0;transition:transform .2s,color .2s}
+.btn:hover .arrow{transform:translateX(3px);color:var(--gold-lt)}
+
+/* CV row */
+.cv-row{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cv-row .btn{justify-content:center;gap:8px;padding:12px 8px}
+.cv-row .btn-main{font-size:12.5px;text-align:center}
+
+/* icon backgrounds */
+.ic-wa{background:#1a3d2a}.ic-maps{background:#1e2535}.ic-waze{background:#1a2535}
+.ic-insta{background:#2e1a2e}.ic-fb{background:#1a2040}.ic-site{background:#1a2520}
+.ic-google{background:#2a1c1c}.ic-linkedin{background:#0d2137}.ic-yt{background:#2a1212}
+.ic-cv{background:#1f2210}.ic-cal{background:#1a1e35}.ic-urg{background:#2d1515}
+.ic-bnmp{background:#1a2030}.ic-email{background:#1e2818}
+
+/* ── FOOTER ── */
+.footer{margin-top:32px;text-align:center;opacity:0;animation:fadeUp .5s ease 1.4s forwards}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:.16em;color:var(--gold)}
+.footer-sub{font-size:10.5px;color:var(--muted);letter-spacing:.09em;margin-top:3px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes modalIn{from{opacity:0;transform:translateY(40px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* staggered delays */
+.lbl-1{animation-delay:.28s}.lbl-2{animation-delay:.46s}.lbl-3{animation-delay:.64s}
+.lbl-4{animation-delay:.82s}.lbl-5{animation-delay:1.0s}.lbl-6{animation-delay:1.14s}
+.l01{animation-delay:.34s}.l02{animation-delay:.42s}.l03{animation-delay:.50s}
+.l04{animation-delay:.56s}.l05{animation-delay:.62s}.l06{animation-delay:.68s}
+.l07{animation-delay:.74s}.l08{animation-delay:.80s}.l09{animation-delay:.86s}
+.l10{animation-delay:.92s}.l11{animation-delay:.98s}.l12{animation-delay:1.04s}
+.l13{animation-delay:1.08s}.l14{animation-delay:1.12s}.l15{animation-delay:1.16s}
+.l16{animation-delay:1.20s}.l17{animation-delay:1.24s}
+
+/* ── CV MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.87);backdrop-filter:blur(7px);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-backdrop.open{opacity:1;pointer-events:all}
+.modal{width:100%;max-width:480px;max-height:93dvh;overflow-y:auto;background:#131917;border:1px solid rgba(201,168,76,.22);border-radius:22px 22px 0 0;padding:0 0 44px;animation:modalIn .32s ease}
+.modal-handle{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,.13);margin:13px auto 0}
+.modal-header{padding:16px 22px 14px;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between}
+.modal-lbl{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+.modal-close{background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;padding:0}
+.modal-close:hover{color:var(--text)}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 22px}
+.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:11px;font-size:13px;cursor:pointer;border:1px solid transparent;font-family:'Lato',sans-serif;transition:transform .18s,filter .2s}
+.mbtn:active{transform:scale(.97)}
+.mbtn:hover{filter:brightness(1.1)}
+.mbtn-dl{background:linear-gradient(135deg,var(--gold),#a8852e);color:#0d0f0e}
+.mbtn-sh{background:var(--surface);border-color:rgba(26,155,140,.38);color:var(--teal-lt)}
+
+/* cv content */
+.cv{padding:0 22px}
+.cv-name{font-family:'Cinzel',serif;font-size:20px;font-weight:600;color:var(--gold);margin:18px 0 3px;letter-spacing:.04em}
+.cv-role{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--teal-lt);margin-bottom:5px}
+.cv-meta{font-size:11.5px;color:var(--muted);margin-bottom:3px;letter-spacing:.04em}
+.cv-contact{font-size:11.5px;color:var(--muted);line-height:1.75}
+.cv-div{height:1px;background:linear-gradient(90deg,rgba(201,168,76,.45),transparent);margin:13px 0}
+.cv-sec{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:16px 0 9px}
+.cv-item{margin-bottom:11px}
+.cv-it{font-size:13px;color:var(--text);margin-bottom:2px}
+.cv-is{font-size:11.5px;color:var(--muted);font-style:italic}
+.cv-id{font-size:12px;color:rgba(232,228,218,.72);margin-top:5px;line-height:1.65}
+.cv-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cv-tag{font-size:10.5px;padding:4px 10px;border-radius:20px;background:rgba(26,155,140,.1);border:1px solid rgba(26,155,140,.27);color:var(--teal-lt)}
+
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-track{background:transparent}
+.modal::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <div class="avatar-bg">
+        <!-- Logo oficial do site -->
+        <img src="https://static.wixstatic.com/media/1aa8a2_b159911423ee4c1a8396a9d609289a4b~mv2.png/v1/fill/w_78,h_80,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/logo%20trasparente.png"
+             alt="Logo Cristiano Rosa"
+             onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Cinzel,serif;font-size:30px;font-weight:600;color:#c9a84c\'>CR</span>'">
+      </div>
+    </div>
+    <div class="name">Cristiano Rosa</div>
+    <div class="role">Advogado Criminal &amp; Estratégico</div>
+    <div class="oab">OAB/RS 78.652 &nbsp;·&nbsp; Porto Alegre/RS</div>
+    <div class="email-line">cristianorosa.rs@gmail.com</div>
+    <div class="divider"></div>
+  </div>
+
+  <!-- ══ CONTATO ══ -->
+  <div class="section-label lbl-1">Contato direto</div>
+  <div class="links">
+    <a class="btn hi-teal l01"
+       href="https://wa.me/5551981220776?text=Ol%C3%A1%2C%20gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20assessoria%20jur%C3%ADdica."
+       target="_blank" rel="noopener">
+      <div class="icon ic-wa">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.948-1.42A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.25a8.25 8.25 0 1 1 0-16.5 8.25 8.25 0 0 1 0 16.5z" fill="#25D366"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">WhatsApp</span><span class="btn-sub">(51) 98122-0776 – Atendimento imediato</span></div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="btn hi-red l02"
+       href="https://www.cristianorosa.net/casos-urgentes"
+       target="_blank" rel="noopener">
+      <div class="icon ic-urg">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#e05050" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#e05050" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">Casos Urgentes – 24h</span><span class="btn-sub">Plantão flagrante, mandados e busca e apreensão</span></div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="btn l03"
+       href="mailto:cristianorosa.rs@gmail.com">
+      <div class="icon ic-email">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="3" stroke="#22c4b0" stroke-width="1.5"/><path d="M2 8l10 7 10-7" stroke="#22c4b0" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">E-mail</span><span class="btn-sub">cristianorosa.rs@gmail.com</span></div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+
+  <!-- ══ AGENDA ══ -->
+  <div class="section-label lbl-2">Agendamento</div>
+  <div class="links">
+    <a class="btn hi-gold l04"
+       href="https://www.cristianorosa.net/agendamentos"
+       target="_blank" rel="noopener">
+      <div class="icon ic-cal">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="3" stroke="#c9a84c" stroke-width="1.5"/><path d="M3 9h18M8 2v4M16 2v4" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">Agendar Consulta</span><span class="btn-sub">Consulta gratuita – orçamento sem compromisso</span></div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+
+  <!-- ══ LOCALIZAÇÃO ══ -->
+  <div class="section-label lbl-3">Localização &amp; Como chegar</div>
+  <div class="links">
+    <a class="btn l05" href="https://maps.google.com/?q=Av.+Protásio+Alves+654+Ed.+Normandie+Porto+Alegre+RS" target="_blank" rel="noopener">
+      <div class="icon ic-maps"><svg viewBox="0 0 24 24"><path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5S10.619 6.5 12 6.5 14.5 7.619 14.5 9 13.381 11.5 12 11.5z" fill="#4285F4"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Nossa Localização</span><span class="btn-sub">Av. Protásio Alves, 654 – Ed. Normandie, lj. 02</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l06" href="https://waze.com/ul?q=Av.+Protásio+Alves+654+Porto+Alegre" target="_blank" rel="noopener">
+      <div class="icon ic-waze"><svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="8" fill="#33CCFF"/><circle cx="9.5" cy="12" r="1" fill="#fff"/><circle cx="14.5" cy="12" r="1" fill="#fff"/><path d="M10 14.5c.5.8 3.5.8 4 0" stroke="#fff" stroke-width=".8" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Venha de Waze</span><span class="btn-sub">Navegação guiada até o escritório</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l07" href="https://www.uber.com/go/product/?pickup=my_location&destination=Av.+Prot%C3%A1sio+Alves+654+Porto+Alegre" target="_blank" rel="noopener">
+      <div class="icon" style="background:#1a1a1a"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#000"/><text x="3" y="17" font-family="Arial" font-weight="bold" font-size="10" fill="#fff">UBER</text></svg></div>
+      <div class="btn-text"><span class="btn-main">Venha de Uber</span><span class="btn-sub">Solicite corrida direto para o escritório</span></div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+
+  <!-- ══ SERVIÇOS ONLINE ══ -->
+  <div class="section-label lbl-4">Serviços online</div>
+  <div class="links">
+    <a class="btn l08" href="https://www.cristianorosa.net/consultas" target="_blank" rel="noopener">
+      <div class="icon ic-bnmp">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#4285F4" stroke-width="1.5"/><path d="M7 8h10M7 12h7M7 16h5" stroke="#4285F4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">Consulta BNMP</span><span class="btn-sub">Mandados de prisão em aberto</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l09" href="https://www.cristianorosa.net/cópia-consulta-aos-mandados-de-prisã" target="_blank" rel="noopener">
+      <div class="icon" style="background:#1a2535">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#22c4b0" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="#22c4b0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">Calculadora de Regime</span><span class="btn-sub">Progressão de regime de cumprimento de pena</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l10" href="https://sites.google.com/view/cristianorosa/%C3%A9-um-caso-de-pris%C3%A3o?authuser=0" target="_blank" rel="noopener">
+      <div class="icon ic-urg">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v7c0 4.5 3.8 8.7 9 10 5.2-1.3 9-5.5 9-10V7L12 2z" stroke="#e05050" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#e05050" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="btn-text"><span class="btn-main">Fui Preso – O que fazer?</span><span class="btn-sub">Guia passo a passo para família e detento</span></div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+
+  <!-- ══ REDES ══ -->
+  <div class="section-label lbl-5">Redes &amp; Avaliações</div>
+  <div class="links">
+    <a class="btn l11" href="https://www.cristianorosa.net" target="_blank" rel="noopener">
+      <div class="icon ic-site"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#1a9b8c" stroke-width="1.5"/><path d="M12 3c-2 2.5-3 5.5-3 9s1 6.5 3 9M12 3c2 2.5 3 5.5 3 9s-1 6.5-3 9M3 12h18" stroke="#1a9b8c" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Site Oficial</span><span class="btn-sub">www.cristianorosa.net</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l12" href="https://www.linkedin.com/in/cristiano-rosa-203a1b21/" target="_blank" rel="noopener">
+      <div class="icon ic-linkedin"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#0A66C2"/><path d="M7 9h2v8H7zm1-3a1.2 1.2 0 1 1 0 2.4A1.2 1.2 0 0 1 8 6zm4 3h1.9v1.1h.03c.27-.5.93-1.1 1.92-1.1C17.8 9 18 10.6 18 12.2V17h-2v-4.4c0-.7-.01-1.6-.97-1.6-.97 0-1.12.76-1.12 1.55V17h-2V9z" fill="#fff"/></svg></div>
+      <div class="btn-text"><span class="btn-main">LinkedIn</span><span class="btn-sub">Cristiano Rosa – Advogado Criminal</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l13" href="https://www.instagram.com/cristianodarosa/?hl=pt-br" target="_blank" rel="noopener">
+      <div class="icon ic-insta"><svg viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#dc2743"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig)"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="1.5" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Instagram</span><span class="btn-sub">@cristianodarosa</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l14" href="https://www.facebook.com/cristanorosa.rs/" target="_blank" rel="noopener">
+      <div class="icon ic-fb"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#1877F2"/><path d="M15.5 8H13V6.5C13 5.7 13.4 5 14.5 5H16V2.5S15 2 13.5 2C11 2 9.5 3.5 9.5 6V8H7v3h2.5v9h3V11h2.3l.7-3z" fill="#fff"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Facebook</span><span class="btn-sub">Cristiano Rosa – Advogado RS</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l15" href="https://www.youtube.com/channel/UC3GWsSmZUoO8HadKllPYwKA" target="_blank" rel="noopener">
+      <div class="icon ic-yt"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#FF0000"/></svg></div>
+      <div class="btn-text"><span class="btn-main">YouTube</span><span class="btn-sub">Cristiano Rosa Advogado Criminal</span></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="btn l16" href="https://search.google.com/local/writereview?placeid=ChIJ" target="_blank" rel="noopener">
+      <div class="icon ic-google"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Avalie-nos no Google</span><span class="btn-sub">Sua opinião fortalece nossa advocacia</span></div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+
+  <!-- ══ CURRÍCULO ══ -->
+  <div class="section-label lbl-6">Currículo Profissional</div>
+  <div class="links">
+    <button class="btn hi-gold l17" onclick="openCV()">
+      <div class="icon ic-cv"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2" stroke="#c9a84c" stroke-width="1.5"/><path d="M8 7h8M8 11h8M8 15h5" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="btn-text"><span class="btn-main">Ver Currículo Completo</span><span class="btn-sub">Perfil, formação, atuação e competências</span></div>
+      <span class="arrow">›</span>
+    </button>
+    <div class="cv-row">
+      <button class="btn" style="animation-delay:1.28s;opacity:0;animation:fadeUp .45s ease 1.28s forwards;border-color:rgba(201,168,76,.38)" onclick="downloadCV()">
+        <div class="icon ic-cv" style="width:32px;height:32px;border-radius:8px;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="btn-text"><span class="btn-main">Baixar PDF</span></div>
+      </button>
+      <button class="btn" style="animation-delay:1.32s;opacity:0;animation:fadeUp .45s ease 1.32s forwards;border-color:rgba(26,155,140,.35)" onclick="shareCard()">
+        <div class="icon" style="width:32px;height:32px;border-radius:8px;flex-shrink:0;background:#1a2520"><svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px"><circle cx="18" cy="5" r="2" stroke="#22c4b0" stroke-width="1.8"/><circle cx="6" cy="12" r="2" stroke="#22c4b0" stroke-width="1.8"/><circle cx="18" cy="19" r="2" stroke="#22c4b0" stroke-width="1.8"/><path d="M8 13.5l8 4M8 10.5l8-4" stroke="#22c4b0" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div class="btn-text"><span class="btn-main">Compartilhar</span></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-brand">·.· Rosa Advogados ·.·</div>
+    <div class="footer-sub">Av. Protásio Alves, 654 – Porto Alegre/RS &nbsp;·&nbsp; Desde 2009</div>
+  </div>
+
+</div><!-- /card -->
+
+<!-- ══════════════ CV MODAL ══════════════ -->
+<div class="modal-backdrop" id="cvModal" onclick="handleBackdropClick(event)">
+  <div class="modal" id="cvSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-lbl">Currículo Profissional</span>
+      <button class="modal-close" onclick="closeCV()">×</button>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn mbtn-dl" onclick="downloadCV()">
+        <svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;flex-shrink:0"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="#0d0f0e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Baixar PDF
+      </button>
+      <button class="mbtn mbtn-sh" onclick="shareCard()">
+        <svg viewBox="0 0 24 24" fill="none" style="width:15px;height:15px;flex-shrink:0"><circle cx="18" cy="5" r="2" stroke="#22c4b0" stroke-width="1.8"/><circle cx="6" cy="12" r="2" stroke="#22c4b0" stroke-width="1.8"/><circle cx="18" cy="19" r="2" stroke="#22c4b0" stroke-width="1.8"/><path d="M8 13.5l8 4M8 10.5l8-4" stroke="#22c4b0" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Compartilhar
+      </button>
+    </div>
+    <div class="cv">
+      <div class="cv-name">Cristiano Rosa</div>
+      <div class="cv-role">Advogado Criminalista &amp; Consultor Jurídico Estratégico</div>
+      <div class="cv-meta">OAB/RS 78.652 &nbsp;·&nbsp; Porto Alegre, Rio Grande do Sul &nbsp;·&nbsp; Desde 2009</div>
+      <div class="cv-contact">
+        (51) 98122-0776 &nbsp;·&nbsp; cristianorosa.rs@gmail.com &nbsp;·&nbsp; www.cristianorosa.net<br>
+        Av. Protásio Alves, 654 – Ed. Normandie, lj. 02 – Rio Branco – CEP 90410-004
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Perfil Profissional</div>
+      <div class="cv-item">
+        <div class="cv-id">Advogado com quase 20 anos de atuação consolidada em Direito Penal e Processual Penal. Sócio fundador da Rosa Advogados. Formação sólida em Ciências Jurídicas e Sociais pela PUC-RS e UFRGS. Experiência institucional em Defensoria Pública, Tribunal de Justiça, Ministério da Defesa e Polícia Civil. Identifica-se também como antropólogo, teólogo e humanista, integrando à prática jurídica uma perspectiva crítica sobre os mecanismos sociais e institucionais da criminalização. Membro convidado do Fórum Internacional Carcerário e do Conselho de Comunidade de Porto Alegre.</div>
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Áreas de Atuação</div>
+      <div class="cv-tags">
+        <span class="cv-tag">Direito Penal</span><span class="cv-tag">Processo Penal</span>
+        <span class="cv-tag">Tribunal do Júri</span><span class="cv-tag">Recursos Criminais</span>
+        <span class="cv-tag">Habeas Corpus</span><span class="cv-tag">Tráfico de Drogas</span>
+        <span class="cv-tag">Crimes Contra a Vida</span><span class="cv-tag">Crimes Sexuais</span>
+        <span class="cv-tag">Violência Doméstica</span><span class="cv-tag">Execução Penal</span>
+        <span class="cv-tag">Crimes Financeiros</span><span class="cv-tag">Direito do Servidor</span>
+        <span class="cv-tag">Família e Sucessões</span><span class="cv-tag">Planos de Saúde</span>
+        <span class="cv-tag">Justiça Restaurativa</span><span class="cv-tag">Direitos Humanos</span>
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Formação Acadêmica</div>
+      <div class="cv-item">
+        <div class="cv-it">Graduação em Antropologia <span style="color:var(--teal-lt);font-size:11px">(em curso)</span></div>
+        <div class="cv-is">TCC: Criminologia Cultural – avaliação midiática de prisões em flagrante e audiências de custódia</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Ciências Jurídicas e Sociais</div>
+        <div class="cv-is">PUC-RS e Universidade Federal do Rio Grande do Sul &nbsp;·&nbsp; OAB/RS 78.652</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Formação em Teologia &amp; Humanidades</div>
+        <div class="cv-is">Perspectiva interdisciplinar integrada à análise jurídica e social</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Mediação, Conciliação e Justiça Restaurativa</div>
+        <div class="cv-is">Coordenação de Práticas Restaurativas e Facilitação de Círculos de Construção de Paz</div>
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Experiência Profissional</div>
+      <div class="cv-item">
+        <div class="cv-it">Sócio Fundador – Rosa Advogados</div>
+        <div class="cv-is">2009 – presente &nbsp;·&nbsp; Porto Alegre/RS</div>
+        <div class="cv-id">Gestão estratégica do escritório e condução direta das causas criminais de maior complexidade. Construção de teses defensivas com base em jurisprudência do STF, STJ e TJRS. Atuação em todas as fases do processo penal: inquérito, instrução, júri, recursos e execução. Atendimento 24h para casos urgentes de flagrante e cumprimento de mandados.</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Experiência Institucional Anterior</div>
+        <div class="cv-is">Defensoria Pública &nbsp;·&nbsp; Tribunal de Justiça &nbsp;·&nbsp; Ministério da Defesa &nbsp;·&nbsp; Polícia Civil/RS</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Caso de Referência – Homicídio Qualificado / Júri em Porto Alegre</div>
+        <div class="cv-is">Proc. 039/2.14.0001879-5 &nbsp;·&nbsp; 2020</div>
+        <div class="cv-id">Tese de legítima defesa em conflito de trânsito; réus Dionatha e Neuza Bitencourt Vidaletti. Condução completa desde o inquérito até a decisão do Júri.</div>
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Competências Técnicas</div>
+      <div class="cv-item">
+        <div class="cv-id">Estrutura recursal defensiva fixa (Caso em Exame, Questão em Discussão, Razões de Decidir, Dispositivo e Tese Recursal). Cadeia de custódia – arts. 158-A a 158-F do CPP. Dosimetria trifásica e bis in idem. Prequestionamento e recursos aos tribunais superiores. Design Thinking e Legal Design aplicados à elaboração de peças. Jurisprudência exclusivamente de fontes oficiais: STF, STJ, TJRS, TRFs e Diários Oficiais. Inteligência artificial e alta tecnologia aplicadas à defesa.</div>
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Participação Institucional</div>
+      <div class="cv-item">
+        <div class="cv-it">Membro Convidado – Fórum Internacional Carcerário</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Conselho de Comunidade de Porto Alegre</div>
+      </div>
+      <div class="cv-item">
+        <div class="cv-it">Associações de cunho comunitário e social – voluntariado ativo</div>
+      </div>
+
+      <div class="cv-div"></div>
+      <div class="cv-sec">Idiomas</div>
+      <div class="cv-item">
+        <div class="cv-it">Português – nativo &nbsp;&nbsp;|&nbsp;&nbsp; Inglês – em formação</div>
+      </div>
+      <div style="height:10px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── MODAL ───────────────────────────────────
+function openCV(){document.getElementById('cvModal').classList.add('open');document.body.style.overflow='hidden'}
+function closeCV(){document.getElementById('cvModal').classList.remove('open');document.body.style.overflow=''}
+function handleBackdropClick(e){if(e.target===document.getElementById('cvModal'))closeCV()}
+let sY=0;
+const sh=document.getElementById('cvSheet');
+sh.addEventListener('touchstart',e=>{sY=e.touches[0].clientY},{passive:true});
+sh.addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-sY>80)closeCV()},{passive:true});
+
+// ── PDF ─────────────────────────────────────
+function downloadCV(){
+  if(!window.jspdf){alert('Aguarde o carregamento da biblioteca PDF.');return}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  const W=doc.internal.pageSize.getWidth();
+  const M=18;let y=0;
+
+  // Header
+  doc.setFillColor(16,22,18);doc.rect(0,0,W,46,'F');
+  doc.setFillColor(201,168,76);doc.rect(0,46,W,1.2,'F');
+
+  // Logo placeholder (initials)
+  doc.setFillColor(26,31,28);doc.circle(M+7,22,7,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(201,168,76);
+  doc.text('CR',M+4.5,24.5);
+
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(201,168,76);
+  doc.text('CRISTIANO ROSA',M+18,16);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(34,196,176);
+  doc.text('Advogado Criminalista  |  OAB/RS 78.652',M+18,23.5);
+  doc.setFontSize(8.5);doc.setTextColor(175,172,165);
+  doc.text('(51) 98122-0776  |  cristianorosa.rs@gmail.com  |  www.cristianorosa.net',M+18,30);
+  doc.text('Av. Protásio Alves, 654 – Ed. Normandie, lj. 02 – Porto Alegre/RS  |  CEP 90410-004',M+18,36.5);
+  doc.text('Atendimento 24h para casos urgentes  |  Desde 2009',M+18,42.5);
+  y=56;
+
+  function sec(t){
+    doc.setFillColor(26,155,140);doc.rect(M,y-1.5,3,.7,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(26,155,140);
+    doc.text(t.toUpperCase(),M+6,y);
+    doc.setDrawColor(45,50,47);doc.setLineWidth(.22);
+    doc.line(M,y+2,W-M,y+2);
+    y+=8;
+  }
+  function body(t,ind){
+    doc.setFont('helvetica','normal');doc.setFontSize(8.8);doc.setTextColor(40,40,40);
+    const lines=doc.splitTextToSize(t,W-M-(ind||M));
+    doc.text(lines,M+(ind||0),y);
+    y+=lines.length*4.4+1;
+  }
+  function iT(t){doc.setFont('helvetica','bold');doc.setFontSize(9.2);doc.setTextColor(25,25,25);doc.text(t,M,y);y+=5}
+  function iS(t){doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(105,105,105);doc.text(t,M,y);y+=5}
+
+  sec('Perfil Profissional');
+  body('Advogado com quase 20 anos de atuação em Direito Penal e Processual Penal. Sócio fundador da Rosa Advogados. Formação em Ciências Jurídicas e Sociais pela PUC-RS e UFRGS. Experiência em Defensoria Pública, TJRS, Ministério da Defesa e Polícia Civil. Antropólogo, teólogo e humanista. Membro do Fórum Internacional Carcerário e do Conselho de Comunidade de Porto Alegre.');y+=2;
+
+  sec('Áreas de Atuação');
+  const ar=['Direito Penal e Processual Penal','Tribunal do Júri','Recursos Criminais (Apelação, HC, REsp, RE)','Tráfico de Drogas e Crimes Hediondos','Crimes Contra a Vida e Crimes Sexuais','Violência Doméstica e Familiar','Execução Penal','Crimes Financeiros e Patrimoniais','Direito do Servidor Público','Família e Sucessões','Planos de Saúde','Justiça Restaurativa e Direitos Humanos'];
+  ar.forEach(a=>{body('• '+a,4);y-=1});y+=4;
+
+  sec('Formação Acadêmica');
+  iT('Graduação em Antropologia (em curso)');iS('TCC: Criminologia Cultural – avaliação midiática de prisões em flagrante e audiências de custódia');
+  iT('Ciências Jurídicas e Sociais – PUC-RS e UFRGS');iS('OAB/RS 78.652');
+  iT('Teologia, Humanidades e Mediação/Justiça Restaurativa');y+=3;
+
+  sec('Experiência Profissional');
+  iT('Sócio Fundador – Rosa Advogados  (2009 – presente)');
+  body('Gestão estratégica e condução das causas criminais de maior complexidade. Elaboração de recursos, teses defensivas e peças em todas as fases do processo penal. Atendimento 24h para flagrantes. Atuação perante STF, STJ, TJRS, TRFs e primeira instância.',0);y+=1;
+  iT('Caso de Referência – Homicídio Qualificado / Júri em Porto Alegre (2020)');
+  body('Tese de legítima defesa em conflito de trânsito – Proc. 039/2.14.0001879-5.',0);y+=3;
+
+  sec('Competências Técnicas');
+  body('Estrutura recursal defensiva (Caso em Exame, Questão em Discussão, Razões de Decidir, Dispositivo e Tese Recursal). Cadeia de custódia – arts. 158-A a 158-F CPP. Dosimetria trifásica. Prequestionamento e recursos superiores. Design Thinking e Legal Design. Jurisprudência somente de fontes oficiais: STF, STJ, TJRS, TRFs. IA e tecnologia aplicadas à defesa.');y+=2;
+
+  sec('Idiomas');body('Português – nativo  |  Inglês – em formação');
+
+  // Footer
+  doc.setFillColor(16,22,18);doc.rect(0,284,W,13,'F');
+  doc.setFillColor(201,168,76);doc.rect(0,284,W,.6,'F');
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(138,135,128);
+  doc.text('·.· Rosa Advogados ·.·  |  www.cristianorosa.net  |  (51) 98122-0776  |  Desde 2009',W/2,292,{align:'center'});
+
+  doc.save('Curriculo_Cristiano_Rosa_OAB_RS_78652.pdf');
+}
+
+// ── SHARE ───────────────────────────────────
+async function shareCard(){
+  const data={
+    title:'Cristiano Rosa – Advogado Criminal | OAB/RS 78.652',
+    text:'Cartão profissional de Cristiano Rosa – Advocacia Criminal & Estratégica | Rosa Advogados | Porto Alegre/RS | (51) 98122-0776',
+    url:window.location.href
+  };
+  if(navigator.share){try{await navigator.share(data)}catch(e){}}
+  else{navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copiado!')).catch(()=>alert('Copie o link da barra de endereços.'))}
+}
+</script>
+</body>
+</html>
