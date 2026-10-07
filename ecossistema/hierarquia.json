@@ -1,0 +1,287 @@
+{
+  "ecossistema": "Rosa Advogados — Skills Penais",
+  "versao": "1.0.0",
+  "atualizado_em": "2026-10-07",
+  "regras_gerais": [
+    "Toda análise começa no nível 0 (diagnostico-processual).",
+    "Cada skill grava um relatório JSON em relatorios/<processo>/ antes de passar adiante.",
+    "Uma skill só roda se os relatórios das skills listadas em 'consome' (obrigatórias) existirem e forem válidos.",
+    "Jurisprudência apenas de fontes oficiais; Jusbrasil e agregadores são vedados.",
+    "Nenhuma peça segue para o nível 6 sem relatório 'auditor-penal-antialucinacao' com status 'aprovado'."
+  ],
+  "niveis": [
+    {
+      "nivel": 0,
+      "nome": "Entrada e triagem",
+      "objetivo": "Inventariar os autos, identificar fase processual e indicar a providência.",
+      "skills": [
+        {
+          "id": "diagnostico-processual",
+          "funcao": "Inventário documental, fase processual, mapa probatório, matriz de nulidades e providência recomendada.",
+          "comandos": ["/diagnostico", "/inventario", "/ip", "/ap", "/recursal", "/provas", "/nulidades", "/teses", "/providencia"],
+          "consome": { "obrigatorio": [], "opcional": [] },
+          "produz": "diagnostico"
+        },
+        {
+          "id": "pedido-de-acesso-as-autos",
+          "funcao": "Requerimento de acesso aos autos quando o diagnóstico aponta lacuna documental.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": ["diagnostico-processual"] },
+          "produz": "peca"
+        }
+      ]
+    },
+    {
+      "nivel": 1,
+      "nome": "Análise probatória",
+      "objetivo": "Auditar a prova: custódia, memória, prova oral, discurso decisório e execução.",
+      "skills": [
+        {
+          "id": "cadeia-custodia-documental",
+          "funcao": "Rastreabilidade, arts. 158-A a 158-F do CPP, fishing expedition, prova digital e ilicitude.",
+          "comandos": ["/custodia", "/cadeia", "/fishing", "/prova-digital", "/ilicitude", "/rastreabilidade", "/desentranhamento", "/justa-causa"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": [] },
+          "produz": "analise"
+        },
+        {
+          "id": "auditoria-prova-memoria",
+          "funcao": "Reconhecimento pessoal, art. 226 CPP, contaminação da memória e prova declarativa.",
+          "comandos": ["/memoria", "/falsamemoria", "/reconhecimento", "/contaminacao", "/auditoria-memoria", "/show-up", "/linha-tempo-memoria"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["analise-transcricao-audiencia"] },
+          "produz": "analise"
+        },
+        {
+          "id": "falsas-memorias",
+          "funcao": "Aprofundamento técnico sobre falsas memórias.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["auditoria-prova-memoria"] },
+          "produz": "analise"
+        },
+        {
+          "id": "analise-transcricao-audiencia",
+          "funcao": "Pipeline de cinco camadas sobre transcrição (.srt/.vtt/.txt): citações, contradições e relatório global.",
+          "comandos": ["/transcricao", "/pipeline", "/camada1", "/camada2", "/camada3", "/camada4", "/camada5", "/analise-transcricao", "/citacoes-literais", "/cruzamento", "/relatorio-global"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": [] },
+          "produz": "analise"
+        },
+        {
+          "id": "audiencias-criminais",
+          "funcao": "Análise de áudio e vídeo de audiência, linguagem corporal, nulidades e banco de citações.",
+          "comandos": ["/triagem", "/depoentes", "/contradicoes", "/policiais", "/memoriais", "/nulidades", "/falas", "/video", "/corporal", "/apelacao", "/resumo", "/citacoes"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["analise-transcricao-audiencia"] },
+          "produz": "analise"
+        },
+        {
+          "id": "discurso-juridico",
+          "funcao": "Marcadores de defesa social em decisões e pareceres e reencaminhamento à legalidade estrita.",
+          "comandos": ["/discurso", "/marcadores", "/defesa-social", "/reencaminhamento", "/diagnostico-discursivo"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": [] },
+          "produz": "analise"
+        },
+        {
+          "id": "seeu-auditoria",
+          "funcao": "Auditoria da execução penal no SEEU.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": [] },
+          "produz": "analise"
+        }
+      ]
+    },
+    {
+      "nivel": 2,
+      "nome": "Construção de teses",
+      "objetivo": "Converter achados em teses hierarquizadas, com pena e jurisprudência oficial.",
+      "skills": [
+        {
+          "id": "teses-defensivas",
+          "funcao": "Matriz de teses principais e subsidiárias.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["cadeia-custodia-documental", "auditoria-prova-memoria", "analise-transcricao-audiencia", "audiencias-criminais", "discurso-juridico"] },
+          "produz": "teses"
+        },
+        {
+          "id": "trafico-drogas",
+          "funcao": "Teses específicas da Lei 11.343/2006.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["cadeia-custodia-documental"] },
+          "produz": "teses"
+        },
+        {
+          "id": "parte-geral-cp",
+          "funcao": "Teses da Parte Geral do Código Penal.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": [] },
+          "produz": "teses"
+        },
+        {
+          "id": "dosimetria-penal",
+          "funcao": "Revisão das três fases da dosimetria e teses subsidiárias de pena.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["teses-defensivas"] },
+          "produz": "teses"
+        },
+        {
+          "id": "pesquisa-jurisprudencial",
+          "funcao": "Precedentes em fontes oficiais (STF, STJ, TJRS, TRF4); alimenta fontes-verificadas.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": ["teses-defensivas", "trafico-drogas", "parte-geral-cp", "dosimetria-penal"] },
+          "produz": "jurisprudencia"
+        },
+        {
+          "id": "predicao-camaras-tjrs",
+          "funcao": "Perfil decisório das câmaras do TJRS para calibrar a estratégia.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": ["teses-defensivas"] },
+          "produz": "analise"
+        },
+        {
+          "id": "perguntas-audiencias-criminais",
+          "funcao": "Roteiro de perguntas para audiência a partir das teses.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["teses-defensivas", "auditoria-prova-memoria"] },
+          "produz": "roteiro"
+        }
+      ]
+    },
+    {
+      "nivel": 3,
+      "nome": "Portões de cabimento",
+      "objetivo": "Confirmar via recursal, tempestividade e barreiras de admissibilidade antes de redigir.",
+      "skills": [
+        {
+          "id": "admissibilidade-recursal",
+          "funcao": "Onze barreiras de REsp, RE, AREsp, AgRg e AgInt (Súmulas 7, 83, 182, 281, 282, 284, 356 etc.).",
+          "comandos": ["/admissibilidade", "/resp", "/re", "/aresp", "/agr", "/prequestionamento", "/barreiras", "/nao-conhecimento"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["teses-defensivas"] },
+          "produz": "portao"
+        },
+        {
+          "id": "admissibilidade-recursal-agravos",
+          "funcao": "Árvore de cabimento e dialeticidade contra monocráticas e inadmissões; emite 'RECURSO TECNICAMENTE AUTORIZADO'.",
+          "comandos": ["/agravo", "/cabimento", "/qual-recurso", "/aresp", "/are", "/agint", "/agrg", "/bifronte"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": [] },
+          "produz": "portao"
+        }
+      ]
+    },
+    {
+      "nivel": 4,
+      "nome": "Redação de peças",
+      "objetivo": "Redigir a peça a partir dos relatórios dos níveis anteriores.",
+      "skills": [
+        {
+          "id": "pedidos-de-liberdade",
+          "funcao": "Classifica o instrumento (HC, revogação, relaxamento) e redige o pedido.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["discurso-juridico", "teses-defensivas", "pesquisa-jurisprudencial"] },
+          "produz": "peca"
+        },
+        {
+          "id": "memoriais-defensivos",
+          "funcao": "Memoriais finais.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["diagnostico-processual", "teses-defensivas"], "opcional": ["analise-transcricao-audiencia", "audiencias-criminais", "pesquisa-jurisprudencial", "dosimetria-penal"] },
+          "produz": "peca"
+        },
+        {
+          "id": "apelacao-criminal",
+          "funcao": "Apelação e contrarrazões com pipeline de seis etapas.",
+          "comandos": ["/apelacao", "/razoes", "/recurso", "/sentenca", "/impugnacao", "/condenou", "/apelou", "/tjrs"],
+          "consome": { "obrigatorio": ["diagnostico-processual", "teses-defensivas"], "opcional": ["dosimetria-penal", "cadeia-custodia-documental", "audiencias-criminais", "pesquisa-jurisprudencial"] },
+          "produz": "peca"
+        },
+        {
+          "id": "agravo-interno-estrategico",
+          "funcao": "Agravo interno ou regimental contra decisão monocrática.",
+          "comandos": ["/agravo", "/agravointerno", "/agravoregimental", "/monocratica", "/negativa", "/naoconhecimento", "/resp-negado", "/re-negado", "/aresp", "/multa-1021", "/vp", "/relator", "/impugnar-decisao"],
+          "consome": { "obrigatorio": ["diagnostico-processual", "admissibilidade-recursal-agravos"], "opcional": ["pesquisa-jurisprudencial"] },
+          "produz": "peca"
+        }
+      ]
+    },
+    {
+      "nivel": 5,
+      "nome": "Auditoria e controle de qualidade",
+      "objetivo": "Revisão adversarial, antialucinação, Design Thinking e Legal Design.",
+      "skills": [
+        {
+          "id": "auditor-penal-antialucinacao",
+          "funcao": "Matriz antialucinação, revisão adversarial e checklist de omissões. Portão obrigatório para o nível 6.",
+          "comandos": ["/auditor", "/antialucinacao", "/auditoria", "/revisar", "/checklist", "/adversarial", "/risco"],
+          "consome": { "obrigatorio": ["diagnostico-processual"], "opcional": ["pedidos-de-liberdade", "memoriais-defensivos", "apelacao-criminal", "agravo-interno-estrategico", "pesquisa-jurisprudencial"] },
+          "produz": "auditoria"
+        },
+        {
+          "id": "design-thinking-penal",
+          "funcao": "Duplo Diamante Penal, teoria dos jogos e bloco final de Legal Design.",
+          "comandos": ["/dt", "/design-thinking", "/empatia", "/teses-dt", "/duplo-diamante", "/legal-design", "/mapa-contradicoes", "/prototipo", "/checklist-penal"],
+          "consome": { "obrigatorio": [], "opcional": ["teses-defensivas"] },
+          "produz": "auditoria"
+        },
+        {
+          "id": "revisao-peticao-entre-ias",
+          "funcao": "Revisão cruzada da peça entre modelos.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": ["auditor-penal-antialucinacao"] },
+          "produz": "auditoria"
+        },
+        {
+          "id": "otimizacao-llm-judicial",
+          "funcao": "Otimização da peça para leitura assistida por IA nos tribunais.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": [] },
+          "produz": "auditoria"
+        },
+        {
+          "id": "humanizer-pt-br",
+          "funcao": "Revisão de estilo e naturalidade do texto em português.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": [] },
+          "produz": "auditoria"
+        }
+      ]
+    },
+    {
+      "nivel": 6,
+      "nome": "Saída e protocolo",
+      "objetivo": "Formatar, protocolar e agendar.",
+      "skills": [
+        {
+          "id": "peticoes-docx",
+          "funcao": "Geração do DOCX no padrão Rosa Advogados.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["auditor-penal-antialucinacao"], "opcional": [] },
+          "produz": "saida"
+        },
+        {
+          "id": "eproc-peticionar",
+          "funcao": "Protocolo no eproc.",
+          "comandos": [],
+          "consome": { "obrigatorio": ["peticoes-docx"], "opcional": [] },
+          "produz": "saida"
+        },
+        {
+          "id": "agendamento-outlook-ics",
+          "funcao": "Eventos .ics para audiências e prazos.",
+          "comandos": ["/ics", "/agendar", "/outlook", "/evento"],
+          "consome": { "obrigatorio": [], "opcional": ["diagnostico-processual"] },
+          "produz": "saida"
+        },
+        {
+          "id": "kit-rosa-advogados-procuracao-contrato",
+          "funcao": "Procuração e contrato de honorários.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": [] },
+          "produz": "saida"
+        },
+        {
+          "id": "procuracao-automatica",
+          "funcao": "Geração automática de procuração.",
+          "comandos": [],
+          "consome": { "obrigatorio": [], "opcional": [] },
+          "produz": "saida"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# Relatórios contêm dados sigilosos de clientes (sigilo profissional): nunca versionar.
+relatorios/*
+!relatorios/.gitkeep
+__pycache__/
